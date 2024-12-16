@@ -1,0 +1,38 @@
+<!-- dialog_filter.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <CheckBox
+        android:id="@+id/checkBoxArduino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Arduino" />
+
+    <CheckBox
+        android:id="@+id/checkBoxIoT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IoT" />
+
+    <CheckBox
+        android:id="@+id/checkBoxProgramming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Programming" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnApplyFilter"
+        android:layout_width="wrap_content"
+        android:textSize="@dimen/_13ssp"
+        android:background="@drawable/edit_profile_btn_back"
+        android:backgroundTint="#12E673"
+        android:textAllCaps="false"
+        android:padding="8dp"
+        android:textColor="@color/white"
+        android:layout_height="wrap_content"
+        android:text="Apply Filter" />
+</LinearLayout>

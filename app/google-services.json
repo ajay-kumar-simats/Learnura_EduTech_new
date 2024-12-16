@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "617620218621",
+    "project_id": "learnura-edutech",
+    "storage_bucket": "learnura-edutech.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617620218621:android:c4f6115057df8df7cb9494",
+        "android_client_info": {
+          "package_name": "com.example.learnura"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKGptHG3sZtBaQWooO2kHNF84deTK-UuI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

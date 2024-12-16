@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:id="@+id/id_py_LLScore"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/my_primary"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:text="Your Score is: "
+        android:layout_margin="10dp"
+        android:padding="3dp"
+        android:id="@+id/idTVPythonScore"
+/>
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/idBtnRestartPython"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:layout_margin="20dp"
+        android:text="RESTART QUIZ"
+        android:layout_gravity="center"
+        android:background="@drawable/edit_profile_btn_back"
+        android:textColor="@color/white"
+        android:textAllCaps="false"/>
+
+    <TextView
+        android:id="@+id/tvFeedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Feedback" />
+
+</LinearLayout>
+

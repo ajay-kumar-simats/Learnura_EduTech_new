@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Allow communication with the emulator's localhost -->
+        <domain includeSubdomains="true">https://8712-2409-40f4-3f-d5fe-1019-eb09-249-345d.ngrok-free.app/</domain>
+    </domain-config>
+</network-security-config>

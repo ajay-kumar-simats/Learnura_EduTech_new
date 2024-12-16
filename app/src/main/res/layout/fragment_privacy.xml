@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EFFFFE"
+    tools:context=".PrivacyFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="#EFFFFE"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="108dp"
+            android:layout_height="117dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/circle_2"
+            app:layout_constraintStart_toEndOf="@+id/textView11"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView12"
+            android:layout_width="107dp"
+            android:layout_height="113dp"
+            android:src="@drawable/circle"
+            app:layout_constraintBottom_toBottomOf="@+id/textView11"
+            app:layout_constraintEnd_toEndOf="@+id/imageView11"
+            app:layout_constraintStart_toEndOf="@+id/textView11"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/inter_semibold"
+            android:text="Privacy Policy"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="68dp"
+            android:paddingTop="-30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.157"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView11">
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:lineSpacingExtra="12sp"
+                android:padding="10dp"
+                android:text="@string/introduction_at_learnura_edutech_we_prioritize_your_privacy_and_ensure_the_secure_handling_of_your_personal_information_this_policy_explains_what_data_we_collect_how_we_use_it_and_how_it_is_safeguarded_by_using_our_app_you_agree_to_the_terms_outlined_here_1_information_we_collect_1_1_firebase_authentication_we_use_google_firebase_to_manage_user_sign_ins_collecting_email_address_display_name_and_profile_picture_for_authentication_and_personalization_your_login_credentials_are_securely_stored_on_firebase_servers_1_2_learning_data_we_track_course_progress_time_spent_on_lessons_and_quiz_performance_to_customize_your_learning_experience_this_data_is_stored_locally_using_room_database_for_offline_access_2_how_we_use_your_information_personalization_tailoring_content_based_on_your_learning_behavior_authentication_secure_access_via_firebase_learning_analytics_adapting_challenges_based_on_your_progress_3_data_storage_security_firebase_handles_authentication_securely_room_database_stores_course_data_locally_for_offline_access_encryption_we_use_encryption_to_protect_your_data_4_data_sharing_we_do_not_share_your_information_with_third_parties_except_trusted_partners_like_firebase_or_as_required_by_law_5_user_rights_you_can_access_update_or_delete_your_data_at_any_time_6_contact_us_if_you_have_any_questions_please_contact_us_at_support_learnuraedutech_com" />
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
