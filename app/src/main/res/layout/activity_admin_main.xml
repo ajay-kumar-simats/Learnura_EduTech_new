@@ -80,6 +80,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="64dp"
+                android:visibility="gone"
                 app:cardCornerRadius="10dp"
                 app:layout_constraintBottom_toTopOf="@+id/tutor_data_dashboard"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -202,6 +203,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
+                android:visibility="invisible"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -231,15 +233,13 @@
                 android:id="@+id/studentReviews"
                 android:layout_width="157dp"
                 android:layout_height="166dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
+                android:visibility="invisible"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="8dp"
                 app:layout_constraintBottom_toBottomOf="@+id/courseDetails"
-                app:layout_constraintEnd_toEndOf="@+id/addChallenges"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/addChallenges"
-                app:layout_constraintTop_toBottomOf="@+id/addChallenges">
+                app:layout_constraintTop_toBottomOf="@+id/addChallenges"
+                tools:layout_editor_absoluteX="229dp">
 
                 <ImageView
                     android:id="@+id/four_admin"
@@ -261,14 +261,13 @@
                 android:id="@+id/admin_logout_txt"
                 android:layout_width="317dp"
                 android:layout_height="86dp"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="4dp"
                 android:fontFamily="@font/inter_semibold"
-                android:gravity="center"
+                android:gravity="center|top"
                 android:text="Log Out"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.375"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/studentReviews" />
 

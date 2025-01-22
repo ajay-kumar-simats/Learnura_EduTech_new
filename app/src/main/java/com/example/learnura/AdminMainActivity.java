@@ -25,12 +25,15 @@ public class AdminMainActivity extends AppCompatActivity {
     String[] categories_admin = {"Current Users","Users Logged out"};
     int[] values_admin = {80,20};
 
+    TextView logout_a;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
 
         anyChartView = findViewById(R.id.anyChartView_admin);
+        logout_a = findViewById(R.id.admin_logout_txt);
 
         setupChartViewAdmin();
 
@@ -48,6 +51,14 @@ public class AdminMainActivity extends AppCompatActivity {
         ImageView teacher_review_image = findViewById(R.id.three_admin);
         ImageView student_review_image_admin = findViewById(R.id.four_admin);
 
+
+        logout_a.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminMainActivity.this,AdminLoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // Set OnClickListener for each arrow to open details
         blog_img .setOnClickListener(new View.OnClickListener() {

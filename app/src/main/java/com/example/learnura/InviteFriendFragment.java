@@ -1,76 +1,84 @@
 package com.example.learnura;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link InviteFriendFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.button.MaterialButton;
+
 public class InviteFriendFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String SAMPLE_INVITE_LINK = "https://learnura_edutech.com/invite";
 
     public InviteFriendFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment InviteFriendFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static InviteFriendFragment newInstance(String param1, String param2) {
         InviteFriendFragment fragment = new InviteFriendFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString("param1", param1);
+        args.putString("param2", param2);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_invite_friend, container, false);
 
         // Change the status bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getActivity().getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.parseColor("#813FF1")); // Use your desired color code
+            window.setStatusBarColor(Color.parseColor("#813FF1")); // Your desired color
         }
+
+        // Initialize UI elements
+        EditText descriptionEditText = view.findViewById(R.id.editTextText6);
+        Button sendInvitationButton = view.findViewById(R.id.button4);
+        ImageView copyLinkImageView = view.findViewById(R.id.imageView19);
+
+        // Set up the "Copy Link" functionality
+        copyLinkImageView.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Invite Link", SAMPLE_INVITE_LINK);
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(requireContext(), "Link copied to clipboard!", Toast.LENGTH_SHORT).show();
+        });
+
+        // Set up the "Send Invitation Link" button
+        sendInvitationButton.setOnClickListener(v -> {
+            String description = descriptionEditText.getText().toString().trim();
+            if (description.isEmpty()) {
+                Toast.makeText(requireContext(), "Please enter a description.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String shareContent = description + "\n\nInvite Link: " + SAMPLE_INVITE_LINK;
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
+
+            startActivity(Intent.createChooser(shareIntent, "Share Invitation Via"));
+        });
 
         return view;
     }

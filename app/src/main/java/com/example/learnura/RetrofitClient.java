@@ -5,7 +5,7 @@ package com.example.learnura;
 
 public class RetrofitClient {
     private static Retrofit retrofit = null;
-    private static final String BASE_URL = " https://c036-2405-201-e009-3299-3d52-aef2-c8e8-fdbe.ngrok-free.app/learnura_api/";
+    private static final String BASE_URL = "https://7d3a-2405-201-e009-3299-6912-5674-dc40-a7d8.ngrok-free.app/learnura_api/";
 
     public static Retrofit getInstance() {
         if (retrofit == null) {

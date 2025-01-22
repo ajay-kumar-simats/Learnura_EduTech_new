@@ -79,33 +79,66 @@ public class AccountActivity extends AppCompatActivity {
         ImageView arrow_privacy = findViewById(R.id.arrowPrivacyPolicy);
         ImageView arrow_about = findViewById(R.id.arrowAbout);
 
-        String userId = auth.getCurrentUser().getUid();
-        usersRef.child(userId).child("username").get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult().exists()) {
-                        String username = task.getResult().getValue(String.class);
-                        et_profile_name.setText(username);
-                    } else {
-                        Toast.makeText(this, "Failed to fetch username!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        String userId;
+        if (auth.getCurrentUser() != null) {
+            userId = auth.getCurrentUser().getUid();
+            usersRef.child(userId).child("username").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().exists()) {
+                    String username = task.getResult().getValue(String.class);
+                    et_profile_name.setText(username);
+                } else {
+                    Toast.makeText(this, "Failed to fetch username!", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-        usersRef.child(userId).child("email").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().exists()) {
-                String a_mail = task.getResult().getValue(String.class);
-                acc_mail.setText(a_mail);
-            } else {
-                Toast.makeText(this, "Failed to fetch email!", Toast.LENGTH_SHORT).show();
-            }
-        });
+            usersRef.child(userId).child("email").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().exists()) {
+                    String a_mail = task.getResult().getValue(String.class);
+                    acc_mail.setText(a_mail);
+                } else {
+                    Toast.makeText(this, "Failed to fetch email!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "No user is signed in!", Toast.LENGTH_LONG).show();
+            // Redirect to login or handle appropriately
+            Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AccountActivity.this,LoginActivity.class);
-                startActivity(intent);
-                finish();
+                // Create an AlertDialog.Builder
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AccountActivity.this);
+
+                // Set dialog properties
+                builder.setTitle("Logout Confirmation");
+                builder.setMessage("Are you sure you want to log out?");
+
+                // Set "Yes" button
+                builder.setPositiveButton("Yes", (dialog, which) -> {
+                    // Perform logout
+                    auth.signOut(); // Sign out from FirebaseAuth if needed
+                    Intent intent = new Intent(AccountActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                });
+
+                // Set "No" button
+                builder.setNegativeButton("No", (dialog, which) -> {
+                    // Dismiss dialog
+                    dialog.dismiss();
+                });
+
+                // Create and show the dialog
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
+
 
         Edit.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -143,6 +143,11 @@ public class AuraActivity extends AppCompatActivity {
                         public void onError(Throwable throwable) {
                             Toast.makeText(AuraActivity.this, "Error: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
                     });
                 }
             }

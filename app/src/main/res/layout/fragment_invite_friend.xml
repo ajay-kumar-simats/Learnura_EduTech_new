@@ -155,6 +155,17 @@
                         android:src="@drawable/invite_2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="32dp"
+                        android:fontFamily="@font/inter_semibold"
+                        android:text="https://learnura_edutech.com/invite"
+                        android:textSize="13sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView29" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
@@ -163,7 +174,7 @@
                 android:id="@+id/editTextText6"
                 android:layout_width="318dp"
                 android:layout_height="99dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/edit_text_back_2"
                 android:ems="10"
                 android:gravity="start|top"
@@ -179,7 +190,7 @@
                 android:id="@+id/button4"
                 android:layout_width="311dp"
                 android:layout_height="48dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/edit_profile_btn_back"
                 android:backgroundTint="#61D566"
                 android:text="Send Invitation Link"

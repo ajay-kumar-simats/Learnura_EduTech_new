@@ -90,6 +90,7 @@
             android:layout_width="49dp"
             android:layout_height="49dp"
             android:layout_marginEnd="16dp"
+            android:visibility="invisible"
             app:cardCornerRadius="10dp"
             app:cardElevation="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/textView8"
@@ -106,23 +107,24 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView3"
+            android:id="@+id/cardViewMockQuestions"
             android:layout_width="49dp"
             android:layout_height="49dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="28dp"
+            android:visibility="visible"
             app:cardCornerRadius="10dp"
             app:cardElevation="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/ellipse_2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardView2"
-            app:layout_constraintVertical_bias="0.543">
+            app:layout_constraintVertical_bias="0.681">
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="41dp"
+                android:layout_height="37dp"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_filter" />
+                app:srcCompat="@drawable/ic_book" />
         </androidx.cardview.widget.CardView>
 
         <ScrollView
@@ -132,7 +134,7 @@
             android:padding="10dp"
             android:scrollbarSize="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView3">
+            app:layout_constraintTop_toBottomOf="@+id/cardViewMockQuestions">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -308,6 +310,18 @@
             app:layout_constraintTop_toTopOf="@+id/searchView"
             app:layout_constraintVertical_bias="0.25"
             app:srcCompat="@drawable/ic_mic" />
+
+        <ImageView
+            android:id="@+id/blog_img"
+            android:layout_width="62dp"
+            android:layout_height="46dp"
+            app:layout_constraintBottom_toBottomOf="@+id/include3"
+            app:layout_constraintEnd_toEndOf="@+id/include3"
+            app:layout_constraintHorizontal_bias="0.954"
+            app:layout_constraintStart_toStartOf="@+id/include3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.516"
+            app:srcCompat="@drawable/ic_blog" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

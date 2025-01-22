@@ -1,8 +1,9 @@
 {
   "project_info": {
     "project_number": "617620218621",
+    "firebase_url": "https://learnura-edutech-default-rtdb.firebaseio.com",
     "project_id": "learnura-edutech",
-    "storage_bucket": "learnura-edutech.appspot.com"
+    "storage_bucket": "learnura-edutech.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +13,20 @@
           "package_name": "com.example.learnura"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "617620218621-irhfrqf0kktu63pecrnb2257si524e7a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.learnura",
+            "certificate_hash": "4abd95946c80c953c8ec7de05516abbcd0d7980b"
+          }
+        },
+        {
+          "client_id": "617620218621-kp3alkes0vmen838mvkkenjcfr1edunr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCKGptHG3sZtBaQWooO2kHNF84deTK-UuI"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "617620218621-kp3alkes0vmen838mvkkenjcfr1edunr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

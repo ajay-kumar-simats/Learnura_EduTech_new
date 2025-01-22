@@ -2,6 +2,7 @@ package com.example.learnura;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,17 +52,23 @@ public class ArduinoAdapter extends RecyclerView.Adapter<ArduinoAdapter.ArduinoV
         holder.imageThumbnail.setImageResource(R.drawable.arduino); // Set your placeholder image
 
         holder.start.setOnClickListener(v -> {
-            String baseUrl = "https://8712-2409-40f4-3f-d5fe-1019-eb09-249-345d.ngrok-free.app/learnura_api/";
-            String videoPath = currentItem.getFilePath(); // e.g., "uploads_videos/your_video.mp4"
-            String videoUrl = baseUrl + videoPath;
 
-            Intent intent = new Intent(context, QuizActivity.class);
-            intent.putExtra("course_id", currentItem.getCourseId());
-            intent.putExtra("course_name", currentItem.getCourseName());
-            intent.putExtra("video_path", videoUrl);
-            intent.putExtra("challenges", (Serializable) currentItem.getChallenges());
-            context.startActivity(intent);
+
+                // Proceed to the course
+                String baseUrl = "https://7d3a-2405-201-e009-3299-6912-5674-dc40-a7d8.ngrok-free.app/learnura_api/";
+                String videoPath = currentItem.getFilePath(); // e.g., "uploads_videos/your_video.mp4"
+                String videoUrl = baseUrl + videoPath;
+
+                Intent intent = new Intent(context, QuizActivity.class);
+                intent.putExtra("course_id", currentItem.getCourseId());
+                intent.putExtra("course_name", currentItem.getCourseName());
+                intent.putExtra("video_path", videoUrl);
+                intent.putExtra("challenges", (Serializable) currentItem.getChallenges());
+                context.startActivity(intent);
+
         });
+
+
     }
 
     @Override
@@ -95,4 +106,11 @@ public class ArduinoAdapter extends RecyclerView.Adapter<ArduinoAdapter.ArduinoV
             start = itemView.findViewById(R.id.start);
         }
     }
+
+
+
+
+
+
+
 }

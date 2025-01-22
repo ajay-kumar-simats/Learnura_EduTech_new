@@ -1,21 +1,31 @@
 package com.example.learnura;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.View;
 import android.widget.Button;
-import android.widget.MediaController;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.common.MediaItem;
+import androidx.media3.ui.PlayerView;
+
+
+
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -28,14 +38,16 @@ import retrofit2.Response;
 
 public class QuizActivity extends AppCompatActivity {
     private TextView questionTextView, difficultyLevelTextView, timerTextView;
-    private VideoView videoView;
-    private Button option1Button, option2Button, option3Button, option4Button, learningCurveButton;
+    private PlayerView playerView;
+    private ExoPlayer exoPlayer;
+    private Button option1Button, option2Button, option3Button, option4Button;
     private List<Challenge> challengesList = new ArrayList<>();
     private int currentQuestionIndex = 0;
     private int courseId;
     private int score = 0;
     private int correctAnswers = 0;
     private int totalQuestions = 0;
+    private ImageView play;
     private CountDownTimer countDownTimer;
     private long timeSpent = 0;
     private long totalTimeSpent = 0;
@@ -47,8 +59,11 @@ public class QuizActivity extends AppCompatActivity {
     private final int TOTAL_QUESTIONS = 15;
     private Set<Integer> askedQuestionIds = new HashSet<>();
     private int analyzedQuestions = 0;
+    private boolean quizEnabled = false;
+    private boolean isPaused = false;
+    private long pauseTimeRemaining = 60000;
+    private List<Long> timeTakenPerQuestion = new ArrayList<>();
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,26 +74,32 @@ public class QuizActivity extends AppCompatActivity {
         questionTextView = findViewById(R.id.idTvPythonQuestion);
         difficultyLevelTextView = findViewById(R.id.tvDifficultyLevel);
         timerTextView = findViewById(R.id.tvTimer);
-        videoView = findViewById(R.id.courseVideoView);
+        playerView = findViewById(R.id.courseVideoView);
         option1Button = findViewById(R.id.idBtnOption1);
         option2Button = findViewById(R.id.idBtnOption2);
         option3Button = findViewById(R.id.idBtnOption3);
         option4Button = findViewById(R.id.idBtnOption4);
 
+        play = findViewById(R.id.play_iv);
+        play.setOnClickListener(v -> showStartQuizDialog());
+
         courseId = getIntent().getIntExtra("course_id", -1);
 
-        option1Button.setOnClickListener(v -> checkAnswer(option1Button.getText().toString()));
-        option2Button.setOnClickListener(v -> checkAnswer(option2Button.getText().toString()));
-        option3Button.setOnClickListener(v -> checkAnswer(option3Button.getText().toString()));
-        option4Button.setOnClickListener(v -> checkAnswer(option4Button.getText().toString()));
+        option1Button.setOnClickListener(v -> {
+            if (quizEnabled) checkAnswer(option1Button.getText().toString());
+        });
+        option2Button.setOnClickListener(v -> {
+            if (quizEnabled) checkAnswer(option2Button.getText().toString());
+        });
+        option3Button.setOnClickListener(v -> {
+            if (quizEnabled) checkAnswer(option3Button.getText().toString());
+        });
+        option4Button.setOnClickListener(v -> {
+            if (quizEnabled) checkAnswer(option4Button.getText().toString());
+        });
 
-
-        MediaController mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
-
+        timerTextView.setText("0 seconds");
         fetchVideoPath(courseId);
-        fetchChallenges();
     }
 
     private void fetchVideoPath(int courseId) {
@@ -92,19 +113,9 @@ public class QuizActivity extends AppCompatActivity {
                     try {
                         String videoPath = response.body().string();
                         videoPath = videoPath.replace("{\"file_path\":\"", "").replace("\"}", "");
-                        Uri videoUri = Uri.parse("https://c036-2405-201-e009-3299-3d52-aef2-c8e8-fdbe.ngrok-free.app/learnura_api/" + videoPath);
-                        videoView.setVideoURI(videoUri);
-                        videoView.setOnPreparedListener(mp -> {
-                            mp.setOnBufferingUpdateListener((mp1, percent) -> {
-                                if (percent > 5) {
-                                    videoView.start();
-                                }
-                            });
-                        });
-                        videoView.seekTo(2000); // Wait for at least 2 seconds before enabling quiz
-                        showStartQuizDialog();
+                        Uri videoUri = Uri.parse("https://7d3a-2405-201-e009-3299-6912-5674-dc40-a7d8.ngrok-free.app/learnura_api/" + videoPath);
+                        initializePlayer(videoUri);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         Toast.makeText(QuizActivity.this, "Failed to load video", Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -119,20 +130,50 @@ public class QuizActivity extends AppCompatActivity {
         });
     }
 
+    private void initializePlayer(Uri videoUri) {
+        exoPlayer = new ExoPlayer.Builder(this).build();
+        playerView.setPlayer(exoPlayer);
+        MediaItem mediaItem = MediaItem.fromUri(videoUri);
+        exoPlayer.setMediaItem(mediaItem);
+        exoPlayer.prepare();
+        exoPlayer.play();
+    }
+
     private void showStartQuizDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Start Quiz?")
-                .setMessage("Do you want to start the quiz after watching the video?")
+                .setMessage("Do you want to start the quiz and the timer?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     dialog.dismiss();
+                    startTimer();
+                    quizEnabled = true;
                     fetchChallenges();
                 })
-                .setNegativeButton("No", (dialog, which) -> {
-                    dialog.dismiss();
-                    finish();
-                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                 .setCancelable(false)
                 .show();
+    }
+
+    private void startTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        countDownTimer = new CountDownTimer(pauseTimeRemaining, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                pauseTimeRemaining = millisUntilFinished;
+                timeSpent = 60 - (millisUntilFinished / 1000);
+                timerTextView.setText("Time: " + timeSpent + "s");
+            }
+
+            @Override
+            public void onFinish() {
+                if (!isFinishing()) {
+                    Toast.makeText(QuizActivity.this, "Time's up!", Toast.LENGTH_SHORT).show();
+                    showFinalScore();
+                }
+            }
+        }.start();
     }
 
     private void fetchChallenges() {
@@ -170,7 +211,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void prepareQuestions() {
-        challengesList.addAll(selectRandomChallenges(easyChallenges, 1));
+        challengesList.addAll(selectRandomChallenges(easyChallenges, 5));
         loadQuestion();
     }
 
@@ -198,32 +239,97 @@ public class QuizActivity extends AppCompatActivity {
             option4Button.setText(currentChallenge.getOption4());
             currentDifficulty = currentChallenge.getDifficulty_level();
             difficultyLevelTextView.setText("Difficulty Level: " + currentDifficulty);
-            startTimer();
-            totalQuestions++;
-        } else if (totalQuestions >= TOTAL_QUESTIONS) {
-            showFinalScore();
         } else {
-            prepareQuestions();
+            if (totalQuestions == TOTAL_QUESTIONS) {
+                showFinalScore();
+            } else {
+                adjustDifficultyAndPrepareNextSet();
+            }
         }
     }
 
-    private void startTimer() {
-        if (countDownTimer != null) {
+    private void adjustDifficultyAndPrepareNextSet() {
+        if (analyzedQuestions >= 5) {
+            if (correctAnswers >= 4 && averageTimeSpent() <= 20) {
+                currentDifficulty = "Hard";
+            } else if (correctAnswers >= 2 && averageTimeSpent() <= 30) {
+                currentDifficulty = "Medium";
+            } else {
+                currentDifficulty = "Easy";
+            }
+        }
+        if (currentDifficulty.equals("Easy") && easyChallenges.size() > 0) {
+            challengesList.addAll(selectRandomChallenges(easyChallenges, 5));
+        } else if (currentDifficulty.equals("Medium") && mediumChallenges.size() > 0) {
+            challengesList.addAll(selectRandomChallenges(mediumChallenges, 5));
+        } else if (currentDifficulty.equals("Hard") && hardChallenges.size() > 0) {
+            challengesList.addAll(selectRandomChallenges(hardChallenges, 5));
+        }
+        currentQuestionIndex = 0;
+        loadQuestion();
+    }
+
+    private double averageTimeSpent() {
+        if (timeTakenPerQuestion.isEmpty()) return 0;
+        long totalTime = 0;
+        for (Long time : timeTakenPerQuestion) {
+            totalTime += time;
+        }
+        return (double) totalTime / timeTakenPerQuestion.size();
+    }
+
+    private void showFinalScore() {
+        long timeTakenInSeconds = totalTimeSpent;
+        saveQuizData(score, timeTakenInSeconds);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("QuizData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("score", score); // Store score
+        editor.putLong("timeTaken", timeTakenInSeconds); // Store time
+        editor.putInt("totalQuestions", TOTAL_QUESTIONS); // Store the total number of questions
+        editor.apply(); // Save the data
+
+        // Show score and time to the user
+        new AlertDialog.Builder(this)
+                .setTitle("Quiz Completed!")
+                .setMessage("Your score is: " + score + " / " + TOTAL_QUESTIONS + "\nTime taken: " + timeTakenInSeconds + " seconds")
+                .setPositiveButton("OK", (dialog, which) -> finish())
+                .setCancelable(false)
+                .show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(exoPlayer!=null){
+            exoPlayer.pause();
+        }
+        if (countDownTimer!=null){
             countDownTimer.cancel();
         }
-        countDownTimer = new CountDownTimer(30000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeSpent = 30 - (millisUntilFinished / 1000);
-                timerTextView.setText("Time: " + timeSpent + "s");
-            }
+    }
 
-            @Override
-            public void onFinish() {
-                Toast.makeText(QuizActivity.this, "Time's up!", Toast.LENGTH_SHORT).show();
-                nextQuestion();
-            }
-        }.start();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (exoPlayer!=null){
+            exoPlayer.play();
+        }
+        if (quizEnabled && pauseTimeRemaining>0){
+            startTimer();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (exoPlayer!=null){
+            exoPlayer.release();
+            exoPlayer = null;
+        }
+        if (countDownTimer!=null){
+            countDownTimer.cancel();
+        }
     }
 
     private void checkAnswer(String selectedAnswer) {
@@ -232,75 +338,60 @@ public class QuizActivity extends AppCompatActivity {
             if (currentChallenge.getCorrectAnswer().equals(selectedAnswer)) {
                 score++;
                 correctAnswers++;
-                Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Incorrect!", Toast.LENGTH_SHORT).show();
             }
             totalQuestions++;
             analyzedQuestions++;
             totalTimeSpent += timeSpent;
-            adjustDifficultyBasedOnPerformance();
-            nextQuestion();
-        }
-    }
-
-    private void adjustDifficultyBasedOnPerformance() {
-        if (analyzedQuestions >= 5) {
-            if (correctAnswers >= 4 && timeSpent < 20) {
-                currentDifficulty = "Hard";
-            } else if (correctAnswers >= 3) {
-                currentDifficulty = "Medium";
+            timeTakenPerQuestion.add(timeSpent);
+            if (totalQuestions == TOTAL_QUESTIONS || pauseTimeRemaining <= 0) {
+                showFinalScore();
             } else {
-                currentDifficulty = "Easy";
+                nextQuestion();
             }
-            challengesList.addAll(selectRandomChallenges(getChallengesByDifficulty(currentDifficulty), 1));
-        }
-    }
-
-    private List<Challenge> getChallengesByDifficulty(String difficulty) {
-        switch (difficulty.toLowerCase()) {
-            case "easy":
-                return easyChallenges;
-            case "medium":
-                return mediumChallenges;
-            case "hard":
-                return hardChallenges;
-            default:
-                return new ArrayList<>();
         }
     }
 
     private void nextQuestion() {
+        if (countDownTimer != null) countDownTimer.cancel();
         currentQuestionIndex++;
-        loadQuestion();
+        if (totalQuestions < TOTAL_QUESTIONS) {
+            loadQuestion();
+        } else {
+            showFinalScore();
+
+        }
     }
 
-    private void showFinalScore() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Quiz Completed");
-        builder.setMessage("Your Score: " + score + "/" + "15" +
-                "\nTime Spent: " + totalTimeSpent + " seconds" +
-                "\nDifficulty Level: " + currentDifficulty);
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            dialog.dismiss();
-            showLearningCurve();
-        });
-        builder.setCancelable(false);
-        builder.show();
+    private void saveQuizData(int score, long timeTaken) {
+        SharedPreferences sharedPreferences = getSharedPreferences("QuizData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Get existing data
+        String quizDataJson = sharedPreferences.getString("allQuizData", "[]");
+        try {
+            JSONArray quizDataArray = new JSONArray(quizDataJson);
+
+            // Create new quiz data JSON object
+            JSONObject quizData = new JSONObject();
+            quizData.put("score", score);
+            quizData.put("timeTaken", timeTaken);
+            quizData.put("month", getCurrentMonth());  // Store the current month (you can use Calendar.getInstance() to get the current month)
+            quizDataArray.put(quizData);
+
+            // Save the updated quiz data
+            editor.putString("allQuizData", quizDataArray.toString());
+            editor.apply();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void showLearningCurve() {
-        Intent intent = new Intent(this, LearningCurveActivity.class);
-        intent.putExtra("score", score);
-        intent.putExtra("timeSpent", totalTimeSpent);
-        intent.putExtra("difficulty", currentDifficulty);
-        startActivity(intent);
-        finish();
-    }
+    private String getCurrentMonth() {
+        // Return the current month as a string (you can customize this)
+        Calendar calendar = Calendar.getInstance();
+        int month = calendar.get(Calendar.MONTH) + 1; // Get the current month (1-based)
+        return "Month " + month;
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 }

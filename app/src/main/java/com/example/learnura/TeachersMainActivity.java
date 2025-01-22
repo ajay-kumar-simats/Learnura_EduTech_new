@@ -41,6 +41,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class TeachersMainActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
+
+    TextView logout_t;
     AnyChartView anyChartView;
     String[] categories = {"Active Learners", "Currently Enrolled"};
     int[] values = {20, 80};
@@ -52,6 +54,18 @@ public class TeachersMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teachers_main);
+
+        logout_t = findViewById(R.id.tutor_logout_txt);
+
+        logout_t.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TeachersMainActivity.this,TeachersLoginActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
 
         // Initialize FirebaseAuth
         firebaseAuth = FirebaseAuth.getInstance();
@@ -104,7 +118,7 @@ public class TeachersMainActivity extends AppCompatActivity {
     }
 
     private void fetchCourses(String teacherEmail) {
-        String url = "https://c036-2405-201-e009-3299-3d52-aef2-c8e8-fdbe.ngrok-free.app/learnura_api/fetch_courses.php?uploaded_by=" + teacherEmail;
+        String url = "https://7d3a-2405-201-e009-3299-6912-5674-dc40-a7d8.ngrok-free.app/learnura_api/fetch_courses.php?uploaded_by=" + teacherEmail;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {

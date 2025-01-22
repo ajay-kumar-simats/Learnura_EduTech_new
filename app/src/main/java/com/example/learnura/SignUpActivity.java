@@ -12,6 +12,7 @@ import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -63,27 +65,55 @@ public class SignUpActivity extends AppCompatActivity {
 
                 if (sign_up_user.isEmpty() || signup_email.isEmpty() || sign_up_pass.isEmpty() || signup_confirm_pass.isEmpty()) {
                     Toast.makeText(SignUpActivity.this, "Please fill all the fields!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                if (!Patterns.EMAIL_ADDRESS.matcher(signup_email).matches()) {
+                    Toast.makeText(SignUpActivity.this, "Enter a valid email address", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!signup_email.endsWith("@gmail.com")) {
+                    Toast.makeText(SignUpActivity.this, "Email must be a valid Gmail address", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
                 if (!sign_up_pass.equals(signup_confirm_pass)) {
-                    Toast.makeText(SignUpActivity.this, "Password is not matched!", Toast.LENGTH_SHORT).show();
-                } else {
-                    auth.createUserWithEmailAndPassword(signup_email, sign_up_pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                String userId = auth.getCurrentUser().getUid();
-                                DatabaseReference userRef = usersRef.child(userId);
-                                userRef.child("username").setValue(sign_up_user);
-                                userRef.child("email").setValue(signup_email);
-                                Toast.makeText(SignUpActivity.this, "Account created successfully", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(SignUpActivity.this, "SignUp Failed!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    Toast.makeText(SignUpActivity.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                auth.createUserWithEmailAndPassword(signup_email, sign_up_pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = auth.getCurrentUser();
+                            if (user != null) {
+                                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> emailTask) {
+                                        if (emailTask.isSuccessful()) {
+                                            String userId = user.getUid();
+                                            DatabaseReference userRef = usersRef.child(userId);
+                                            userRef.child("username").setValue(sign_up_user);
+                                            userRef.child("email").setValue(signup_email);
+                                            Toast.makeText(SignUpActivity.this, "Verification email sent. Please verify your email.", Toast.LENGTH_SHORT).show();
+                                            auth.signOut();
+                                            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            Toast.makeText(SignUpActivity.this, "Failed to send verification email: " + emailTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        } else {
+                            Toast.makeText(SignUpActivity.this, "SignUp Failed! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
 

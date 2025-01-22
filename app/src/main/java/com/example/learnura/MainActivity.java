@@ -5,8 +5,10 @@ import static android.Manifest.permission.RECORD_AUDIO;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.Image;
@@ -34,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -56,8 +60,12 @@ public class MainActivity extends AppCompatActivity {
     ImageView menu,micButton;
     TextView e1txt;
 
+    ImageView blog;
+
     TextView usernameTextView;
     LinearLayout home, achievements, aura, account,l_curve;
+
+    CardView MockQuestions;
 
     SearchView searchView;
 
@@ -77,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        MockQuestions = findViewById(R.id.cardViewMockQuestions);
+
+        blog = findViewById(R.id.blog_img);
+
         usernameTextView = findViewById(R.id.name_txt_main_activity);
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -95,6 +107,15 @@ public class MainActivity extends AppCompatActivity {
         l_curve = findViewById(R.id.learning_curve);
         e1txt = findViewById(R.id.EmailTextView);
 
+        MockQuestions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,ExamMockQuestionsGeneratorActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         arduinoRecyclerView = findViewById(R.id.arduinoRecyclerView);
         arduinoRecyclerView.setHasFixedSize(true);
         arduinoRecyclerView.setLayoutManager(new LinearLayoutManager(this, HORIZONTAL, false));
@@ -109,16 +130,29 @@ public class MainActivity extends AppCompatActivity {
 
         fetchCourses();
 
-        String userId = auth.getCurrentUser().getUid();
-        usersRef.child(userId).child("username").get().addOnCompleteListener(task -> {
-            if(task.isSuccessful() && task.getResult().exists()){
-                String username = task.getResult().getValue(String.class);
-                usernameTextView.setText(username);
-            }else{
-                Toast.makeText(this, "Failed to fetch username!", Toast.LENGTH_SHORT).show();
+        if (auth.getCurrentUser() != null) {
+            String userId = auth.getCurrentUser().getUid();
+            usersRef.child(userId).child("username").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult().exists()) {
+                    String username = task.getResult().getValue(String.class);
+                    usernameTextView.setText(username);
+                } else {
+                    Toast.makeText(this, "Error fetching username.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Logged in as Guest", Toast.LENGTH_SHORT).show();
+
+        }
+
+
+        blog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,BlogActivity.class);
+                startActivity(intent);
             }
         });
-
         e1txt.setOnClickListener(v -> {
             String emailAddress = "ajashiatechnologies@gmail.com";
             String subject = "Feedback / Suggestion";
@@ -227,10 +261,17 @@ public class MainActivity extends AppCompatActivity {
                     micButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (ContextCompat.checkSelfPermission(MainActivity.this,android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
-                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION_CODE);
-                            }else{
-                               startVoiceInput();
+                            if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                                if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.RECORD_AUDIO)) {
+                                    new AlertDialog.Builder(MainActivity.this)
+                                            .setMessage("We need your permission to access the microphone for voice search.")
+                                            .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION_CODE))
+                                            .show();
+                                } else {
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION_CODE);
+                                }
+                            } else {
+                                startVoiceInput();
                             }
                         }
                     });
@@ -249,6 +290,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void startVoiceInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);

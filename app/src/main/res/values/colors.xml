@@ -12,7 +12,7 @@
     <color name="error">#B00020</color>
     <color name="received_message_background">#243545</color>
     <color name="date_time">#000000</color>
-
+    <color name="bar_graph">#FF5722</color>
     <color name="my_primary">#5E35B1</color>
     <color name="my_Secondary">#673AB7</color>
 

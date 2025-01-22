@@ -137,6 +137,7 @@
                 android:fontFamily="@font/poppins"
                 android:gravity="center"
                 android:text="Remember Me"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.06"
                 app:layout_constraintStart_toStartOf="parent"

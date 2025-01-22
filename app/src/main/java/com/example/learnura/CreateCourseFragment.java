@@ -99,7 +99,7 @@ public class CreateCourseFragment extends Fragment {
             RequestBody categoryPart = RequestBody.create(MediaType.parse("text/plain"), category);
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://c036-2405-201-e009-3299-3d52-aef2-c8e8-fdbe.ngrok-free.app/learnura_api/") // Replace with your Ngrok URL
+                    .baseUrl("https://7d3a-2405-201-e009-3299-6912-5674-dc40-a7d8.ngrok-free.app/learnura_api/") // Replace with your Ngrok URL
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 

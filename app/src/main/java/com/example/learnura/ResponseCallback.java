@@ -4,4 +4,6 @@ public interface ResponseCallback {
 
     void onResponse(String response);
     void onError(Throwable throwable);
+
+    void onError(String error);
 }
